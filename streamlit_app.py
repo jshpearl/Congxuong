@@ -3,8 +3,10 @@ import pandas as pd
 import random
 import json
 import os
+import base64
+from io import BytesIO
 from datetime import datetime
-import streamlit.components.v1 as components
+from gtts import gTTS
 
 # --- CẤU HÌNH TRANG STREAMLIT ---
 st.set_page_config(
@@ -13,6 +15,29 @@ st.set_page_config(
     layout="wide",
     initial_sidebar_state="collapsed"
 )
+
+# --- HÀM TẠO ÂM THANH CHUẨN TIẾNG TRUNG BẰNG GTTS (CACHE ĐỂ CHẠY CỰC NHANH) ---
+@st.cache_data(show_spinner=False)
+def get_audio_html(text: str) -> str:
+    """Tạo thẻ audio HTML5 dạng base64 phát tiếng Trung chuẩn."""
+    try:
+        tts = gTTS(text=text, lang='zh-cn', slow=False)
+        fp = BytesIO()
+        tts.write_to_fp(fp)
+        fp.seek(0)
+        audio_b64 = base64.b64encode(fp.read()).decode("utf-8")
+        # Nút bấm phát audio bằng Javascript cục bộ, không phụ thuộc mạng ngoài
+        html = f"""
+        <span style="display:inline-block; vertical-align:middle;">
+            <audio id="audio_{hash(text)}" src="data:audio/mp3;base64,{audio_b64}"></audio>
+            <button type="button" class="audio-btn" onclick="document.getElementById('audio_{hash(text)}').play(); event.stopPropagation();">
+                🔊 Nghe
+            </button>
+        </span>
+        """
+        return html
+    except Exception:
+        return ""
 
 # --- CSS PASTEL, BACKGROUND CHUYỂN MÀU & BO GÓC DỊU MẮT ---
 st.markdown("""
@@ -141,7 +166,7 @@ st.markdown("""
         box-sizing: border-box;
     }
 
-    /* MẶT TRƯỚC: PASTEL XANH DƯƠNG & TÍM NHẸ */
+    /* MẶT TRƯỚC */
     .flashcard-front {
         background: linear-gradient(135deg, rgba(240, 247, 255, 0.95) 0%, rgba(250, 245, 255, 0.95) 100%);
         border: 2px solid #DBEAFE;
@@ -151,7 +176,7 @@ st.markdown("""
         backdrop-filter: blur(8px);
     }
 
-    /* MẶT SAU: PASTEL TRẮNG SÁNG & VIỀN BẠC HÀ */
+    /* MẶT SAU */
     .flashcard-back {
         background: rgba(255, 255, 255, 0.96);
         border: 2px solid #BBF7D0;
@@ -189,7 +214,7 @@ st.markdown("""
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        margin-top: 12px;
+        margin-top: 8px;
         transition: all 0.2s;
         box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
     }
@@ -272,36 +297,9 @@ st.markdown("""
         line-height: 1.5;
     }
 </style>
-
-<!-- TRÌNH PHÁT ÂM TIẾNG TRUNG ROBUST (HTML5 + FALLBACK WEB SPEECH) -->
-<script>
-function speakText(txt, evt) {
-    if (evt) {
-        evt.stopPropagation();
-        evt.preventDefault();
-    }
-    try {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            var msg = new SpeechSynthesisUtterance(txt);
-            msg.lang = 'zh-CN';
-            msg.rate = 0.85;
-            window.speechSynthesis.speak(msg);
-            return;
-        }
-    } catch(e) {}
-
-    try {
-        var audio = new Audio("[suspicious link removed]" + encodeURIComponent(txt) + "&type=1");
-        audio.play();
-    } catch(err) {
-        console.error("Audio error:", err);
-    }
-}
-</script>
 """, unsafe_allow_html=True)
 
-# --- DỮ LIỆU TỔNG 26 TỪ CỐT LÕI (DANH MỤC GỘP CHUNG) ---
+# --- DỮ LIỆU TỔNG 26 TỪ CỐT LÕI ---
 VOCAB_DATA = [
     {
         "id": 1,
@@ -564,6 +562,7 @@ if mode_choice == "Thẻ từ":
 
         cur_word = current_vocab[st.session_state.card_idx]
         colloc_html = "".join([f"<div class='colloc-item'>• {c}</div>" for c in cur_word["collocations"]])
+        audio_btn_html = get_audio_html(cur_word["word"])
 
         flashcard_html = f"""
         <div class="flashcard-wrapper">
@@ -576,9 +575,7 @@ if mode_choice == "Thẻ từ":
                         <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
                             <h1 class="chinese-word">{cur_word['word']}</h1>
                             <div class="pinyin-word">{cur_word['pinyin']}</div>
-                            <button type="button" class="audio-btn" onclick="speakText('{cur_word['word']}', event)">
-                                🔊 Nghe phát âm
-                            </button>
+                            {audio_btn_html}
                         </div>
                         <div style="color: #94A3B8; font-size: 13px;">👆 <b>Chạm thẻ để lật mặt sau</b></div>
                     </div>
@@ -590,9 +587,7 @@ if mode_choice == "Thẻ từ":
                                     <h3 style="margin:0; color:#1E3A8A; display:inline;">{cur_word['word']}</h3>
                                     <span style="font-size:15px; color:#64748B; margin-left:8px;">{cur_word['pinyin']}</span>
                                 </div>
-                                <button type="button" class="audio-btn" style="margin:0; padding:4px 12px; font-size:12px;" onclick="speakText('{cur_word['word']}', event)">
-                                    🔊 Nghe
-                                </button>
+                                {audio_btn_html}
                             </div>
                             <div style="color:#059669; font-weight:700; font-size:17px; margin:8px 0 10px 0;">👉 {cur_word['meaning']}</div>
                             <div style="font-size:13px; font-weight:600; color:#334155; margin-bottom:4px;">🔗 Cụm từ hay dùng:</div>
@@ -674,6 +669,7 @@ elif mode_choice == "Trắc nghiệm":
             st.rerun()
     else:
         q_item = st.session_state.quiz_list[cur_q_idx]
+        q_audio_html = get_audio_html(q_item["word"])
 
         st.caption(f"Tiến độ câu hỏi: **Câu {cur_q_idx + 1} / {total_q}**")
         st.progress((cur_q_idx) / total_q)
@@ -682,9 +678,7 @@ elif mode_choice == "Trắc nghiệm":
             st.markdown(f"""
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="color:#1E3A8A; margin:0;">{q_item['word']} <span style="font-size:18px; color:#64748B; font-weight:normal;">({q_item['pinyin']})</span></h2>
-                <button type="button" class="audio-btn" style="margin:0; padding:4px 12px;" onclick="speakText('{q_item['word']}', event)">
-                    🔊 Nghe
-                </button>
+                {q_audio_html}
             </div>
             <p style="color:#475569; margin-top:8px; font-size:15px;">👉 Từ trên có nghĩa là gì?</p>
             """, unsafe_allow_html=True)
@@ -784,13 +778,12 @@ elif mode_choice == "Mục lục từ":
 
     for w in filtered:
         collocs_str = "".join([f"<div class='vocab-card-colloc'>• {c}</div>" for c in w["collocations"]])
+        c_audio_html = get_audio_html(w["word"])
         card_html = f"""
         <div class="vocab-card">
             <div class="vocab-card-header">
                 <span class="vocab-card-title">{w['word']}</span>
-                <button type="button" class="audio-btn" style="margin:0; padding:4px 14px;" onclick="speakText('{w['word']}', event)">
-                    🔊 Nghe
-                </button>
+                {c_audio_html}
             </div>
             <div class="vocab-card-pinyin">{w['pinyin']}</div>
             <div class="vocab-card-meaning">➔ {w['meaning']}</div>
