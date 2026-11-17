@@ -4,6 +4,7 @@ import random
 import json
 import os
 from datetime import datetime
+import streamlit.components.v1 as components
 
 # --- CẤU HÌNH TRANG STREAMLIT ---
 st.set_page_config(
@@ -13,10 +14,10 @@ st.set_page_config(
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS PASTEL DỊU NHẸ, BO GÓC & ẨN LOGO GÓC PHẢI ---
+# --- CSS PASTEL, BACKGROUND CHUYỂN MÀU & BO GÓC DỊU MẮT ---
 st.markdown("""
 <style>
-    /* 1. ẨN HOÀN TOÀN LOGO STREAMLIT & HEADER GÓC PHẢI */
+    /* 1. ẨN HOÀN TOÀN HEADER & LOGO STREAMLIT */
     #MainMenu {visibility: hidden; display: none !important;}
     header[data-testid="stHeader"] {visibility: hidden; display: none !important;}
     footer {visibility: hidden; display: none !important;}
@@ -24,17 +25,57 @@ st.markdown("""
     [data-testid="stDecoration"] {visibility: hidden; display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden; display: none !important;}
 
-    /* 2. KHUNG CHÍNH MOBILE-FIRST */
+    /* 2. BACKGROUND TOÀN TRANG: GRADIENT PASTEL MỀM MẠI */
+    .stApp {
+        background: linear-gradient(135deg, #F0F4FF 0%, #FAF5FF 35%, #FFF7ED 70%, #F0FDF4 100%);
+        background-attachment: fixed;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* 3. KHUNG TRUNG TÂM MOBILE-FIRST */
     .block-container {
-        padding-top: 1rem;
-        padding-bottom: 2rem;
-        padding-left: 0.8rem;
-        padding-right: 0.8rem;
+        padding-top: 1.2rem;
+        padding-bottom: 2.5rem;
+        padding-left: 1rem;
+        padding-right: 1rem;
         max-width: 680px;
         margin: auto;
     }
 
-    /* 3. NÚT DÀN HÀNG NGANG PASTEL BO GÓC TRÒN TRĨNH */
+    /* 4. TIÊU ĐỀ TRANG TRÍ ĐẸP MẮT */
+    .hero-title-box {
+        text-align: center;
+        padding: 18px 10px 10px 10px;
+        margin-bottom: 12px;
+    }
+    .hero-badge {
+        display: inline-block;
+        background: #E0E7FF;
+        color: #3730A3;
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        padding: 4px 14px;
+        border-radius: 99px;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+    }
+    .hero-title {
+        font-size: 32px;
+        font-weight: 800;
+        letter-spacing: 0.5px;
+        color: #1E3A8A;
+        margin: 0;
+        text-shadow: 0 2px 8px rgba(30, 58, 138, 0.08);
+    }
+    .hero-subtitle {
+        font-size: 14px;
+        color: #64748B;
+        margin-top: 5px;
+        margin-bottom: 0;
+    }
+
+    /* 5. NÚT DÀN HÀNG NGANG PASTEL BO TRÒN */
     div[data-testid="stRadio"] > div {
         display: flex;
         flex-direction: row;
@@ -42,23 +83,27 @@ st.markdown("""
         gap: 8px;
     }
     div[data-testid="stRadio"] label {
-        background: #F8FAFC;
-        padding: 7px 16px;
+        background: rgba(255, 255, 255, 0.85);
+        backdrop-filter: blur(4px);
+        padding: 8px 18px;
         border-radius: 24px;
         border: 1px solid #E2E8F0;
         cursor: pointer;
         font-weight: 500;
         font-size: 14px;
         color: #475569;
-        transition: all 0.2s ease;
+        transition: all 0.25s ease;
         margin: 0 !important;
+        box-shadow: 0 2px 6px rgba(148, 163, 184, 0.08);
     }
     div[data-testid="stRadio"] label:hover {
-        background: #EEF2F6;
+        background: #FFFFFF;
         border-color: #CBD5E1;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(148, 163, 184, 0.15);
     }
 
-    /* 4. FLASHCARD 3D BO GÓC PASTEL */
+    /* 6. FLASHCARD 3D BO GÓC PASTEL CAO CẤP */
     .flashcard-wrapper {
         perspective: 1200px;
         margin: 12px auto;
@@ -70,7 +115,7 @@ st.markdown("""
     .flashcard-inner {
         position: relative;
         width: 100%;
-        min-height: 390px;
+        min-height: 400px;
         transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
         transform-style: preserve-3d;
         cursor: pointer;
@@ -84,12 +129,12 @@ st.markdown("""
         position: absolute;
         width: 100%;
         height: 100%;
-        min-height: 390px;
+        min-height: 400px;
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
-        border-radius: 24px;
-        padding: 24px 20px;
-        box-shadow: 0 10px 25px rgba(148, 163, 184, 0.12);
+        border-radius: 26px;
+        padding: 24px 22px;
+        box-shadow: 0 12px 30px rgba(100, 116, 139, 0.12);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -98,31 +143,34 @@ st.markdown("""
 
     /* MẶT TRƯỚC: PASTEL XANH DƯƠNG & TÍM NHẸ */
     .flashcard-front {
-        background: linear-gradient(135deg, #F0F7FF 0%, #FAF5FF 100%);
+        background: linear-gradient(135deg, rgba(240, 247, 255, 0.95) 0%, rgba(250, 245, 255, 0.95) 100%);
         border: 2px solid #DBEAFE;
         text-align: center;
         align-items: center;
         justify-content: center;
+        backdrop-filter: blur(8px);
     }
 
-    /* MẶT SAU: PASTEL XANH LÁ BẠC HÀ DỊU */
+    /* MẶT SAU: PASTEL TRẮNG SÁNG & VIỀN BẠC HÀ */
     .flashcard-back {
-        background: #FFFFFF;
+        background: rgba(255, 255, 255, 0.96);
         border: 2px solid #BBF7D0;
         transform: rotateY(180deg);
         overflow-y: auto;
         text-align: left;
+        backdrop-filter: blur(8px);
     }
 
     .chinese-word {
-        font-size: 50px;
-        font-weight: 700;
+        font-size: 54px;
+        font-weight: 800;
         color: #1E3A8A;
         margin: 0;
         line-height: 1.2;
+        letter-spacing: 1px;
     }
     .pinyin-word {
-        font-size: 21px;
+        font-size: 22px;
         color: #64748B;
         margin-top: 6px;
         font-weight: 500;
@@ -135,36 +183,35 @@ st.markdown("""
         color: #2563EB;
         font-size: 14px;
         font-weight: 600;
-        padding: 6px 14px;
+        padding: 7px 16px;
         border-radius: 20px;
         cursor: pointer;
         display: inline-flex;
         align-items: center;
         gap: 6px;
-        margin-top: 10px;
+        margin-top: 12px;
         transition: all 0.2s;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
     }
     .audio-btn:hover {
         background: #DBEAFE;
-        transform: scale(1.03);
-    }
-    .audio-btn:active {
-        transform: scale(0.97);
+        transform: scale(1.04);
     }
 
-    /* 5. KHUNG THẺ TỪ TRONG MỤC LỤC TỪ (CARD VIEW) */
+    /* 7. KHUNG THẺ TỪ TRONG MỤC LỤC TỪ */
     .vocab-card {
-        background: #FFFFFF;
+        background: rgba(255, 255, 255, 0.92);
+        backdrop-filter: blur(6px);
         border: 1.5px solid #E2E8F0;
-        border-radius: 20px;
-        padding: 18px 20px;
-        margin-bottom: 16px;
-        box-shadow: 0 4px 15px rgba(148, 163, 184, 0.08);
+        border-radius: 22px;
+        padding: 20px 22px;
+        margin-bottom: 18px;
+        box-shadow: 0 4px 18px rgba(148, 163, 184, 0.09);
         transition: transform 0.2s, box-shadow 0.2s;
     }
     .vocab-card:hover {
         transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(148, 163, 184, 0.14);
+        box-shadow: 0 10px 24px rgba(148, 163, 184, 0.16);
     }
     .vocab-card-header {
         display: flex;
@@ -172,8 +219,8 @@ st.markdown("""
         align-items: center;
     }
     .vocab-card-title {
-        font-size: 26px;
-        font-weight: 700;
+        font-size: 28px;
+        font-weight: 800;
         color: #1E3A8A;
         margin: 0;
     }
@@ -181,12 +228,12 @@ st.markdown("""
         font-size: 16px;
         color: #64748B;
         margin-top: 2px;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         font-style: italic;
     }
     .vocab-card-meaning {
         font-size: 16px;
-        font-weight: 600;
+        font-weight: 700;
         color: #059669;
         margin-bottom: 10px;
     }
@@ -197,29 +244,28 @@ st.markdown("""
     }
     .vocab-card-example {
         background: #F0FDF4;
-        border-left: 3px solid #34D399;
-        border-radius: 8px;
-        padding: 8px 12px;
+        border-left: 3.5px solid #34D399;
+        border-radius: 10px;
+        padding: 9px 13px;
         margin-top: 10px;
         font-size: 13.5px;
         color: #166534;
-        line-height: 1.5;
+        line-height: 1.55;
     }
 
-    /* CỤM TỪ TRÊN FLASHCARD */
     .colloc-item {
         background-color: #F8FAFC;
         border-left: 3px solid #10B981;
         padding: 6px 10px;
         margin: 5px 0;
-        border-radius: 6px;
+        border-radius: 8px;
         font-size: 13.5px;
         color: #1E293B;
     }
     .example-box {
         background-color: #F0FDF4;
         border-radius: 12px;
-        padding: 10px 12px;
+        padding: 10px 13px;
         margin-top: 10px;
         font-size: 13px;
         color: #166534;
@@ -227,29 +273,29 @@ st.markdown("""
     }
 </style>
 
-<!-- JAVASCRIPT PHÁT ÂM TIẾNG TRUNG -->
+<!-- TRÌNH PHÁT ÂM TIẾNG TRUNG ROBUST (HTML5 + FALLBACK WEB SPEECH) -->
 <script>
-function playChineseAudio(text, event) {
-    if (event) {
-        event.stopPropagation();
-        event.preventDefault();
+function speakText(txt, evt) {
+    if (evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
     }
     try {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-            var utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'zh-CN';
-            utterance.rate = 0.85;
-            window.speechSynthesis.speak(utterance);
-        } else {
-            var url = "[suspicious link removed]" + encodeURIComponent(text);
-            var audio = new Audio(url);
-            audio.play();
+            var msg = new SpeechSynthesisUtterance(txt);
+            msg.lang = 'zh-CN';
+            msg.rate = 0.85;
+            window.speechSynthesis.speak(msg);
+            return;
         }
-    } catch(e) {
-        var url = "[suspicious link removed]" + encodeURIComponent(text);
-        var audio = new Audio(url);
+    } catch(e) {}
+
+    try {
+        var audio = new Audio("[suspicious link removed]" + encodeURIComponent(txt) + "&type=1");
         audio.play();
+    } catch(err) {
+        console.error("Audio error:", err);
     }
 }
 </script>
@@ -345,7 +391,7 @@ VOCAB_DATA = [
         "id": 15,
         "word": "生管部", "pinyin": "shēngguǎn bù", "meaning": "bộ phận sinh quản (PMC - Kế hoạch & Điều độ)",
         "collocations": ["生管排产 (shēngguǎn páichǎn) — sinh quản lên lịch sản xuất", "核对交期 (héduì jiāoqī) — đối chiếu hạn giao hàng", "产能评估 (chánnéng pínggū) — đánh giá năng suất xưởng"],
-        "example": "生管部正在根据订单安排下周 de 排产计划。(Shēngguǎn bù zhèngzài gēnjù dìngdān ānpái xià zhōu de páichǎn jìhuà.) — Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới theo đơn hàng."
+        "example": "生管部正在根据订单安排下周的排产计划。(Shēngguǎn bù zhèngzài gēnjù dìngdān ānpái xià zhōu de páichǎn jìhuà.) — Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới theo đơn hàng."
     },
     {
         "id": 16,
@@ -454,16 +500,21 @@ if "quiz_error_msg" not in st.session_state:
 if "quiz_wrong_attempts" not in st.session_state:
     st.session_state.quiz_wrong_attempts = 0
 
-# --- TIÊU ĐỀ CHÍNH ---
-st.markdown("<h2 style='text-align: center; color: #1E3A8A; margin-bottom: 4px;'>TIẾNG TRUNG CÔNG XƯỞNG</h2>", unsafe_allow_html=True)
-st.caption("<p style='text-align: center; color: #64748B; margin-top: 0;'>Ứng dụng Flashcard & Luyện phản xạ từ vựng thực chiến</p>", unsafe_allow_html=True)
+# --- TIÊU ĐỀ TRANG TRÍ VỚI BACKGROUND PASTEL ---
+st.markdown("""
+<div class="hero-title-box">
+    <div class="hero-badge">🏭 XƯỞNG SẢN XUẤT THỰC CHIẾN</div>
+    <h1 class="hero-title">TIẾNG TRUNG CÔNG XƯỞNG</h1>
+    <p class="hero-subtitle">Ứng dụng Flashcard & Luyện phản xạ từ vựng chuyên ngành</p>
+</div>
+""", unsafe_allow_html=True)
 
 # Ô NHẬP TÊN HỌC VIÊN
 s_name = st.text_input("👤 Họ tên học viên:", value=st.session_state.student_name, placeholder="Ví dụ: Nguyễn Văn A")
 if s_name:
     st.session_state.student_name = s_name.strip()
 
-# --- 1. DÀN HÀNG NGANG: PHẠM VI BÀI HỌC (GỘP CHUNG) ---
+# --- 1. PHẠM VI BÀI HỌC (GỘP CHUNG) ---
 st.markdown("**Phạm vi bài học:**")
 scope_choice = st.radio(
     "scope_radio",
@@ -503,7 +554,6 @@ if mode_choice == "Thẻ từ":
         if st.session_state.card_idx >= total_words:
             st.session_state.card_idx = 0
 
-        # ĐÃ SỬA: st.columns(2) truyền đầy đủ tham số
         top_btn1, top_btn2 = st.columns(2)
         with top_btn1:
             st.caption(f"Thẻ hiện tại: **{st.session_state.card_idx + 1} / {total_words}**")
@@ -522,15 +572,15 @@ if mode_choice == "Thẻ từ":
                 <div class="flashcard-inner">
                     <!-- MẶT TRƯỚC -->
                     <div class="flashcard-face flashcard-front">
-                        <span style="background:#E0E7FF; color:#3730A3; padding:4px 14px; border-radius:99px; font-size:12px; font-weight:600;">Từ vựng #{cur_word['id']}</span>
+                        <span style="background:#E0E7FF; color:#3730A3; padding:5px 16px; border-radius:99px; font-size:12px; font-weight:700;">TỪ VỰNG #{cur_word['id']}</span>
                         <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
                             <h1 class="chinese-word">{cur_word['word']}</h1>
                             <div class="pinyin-word">{cur_word['pinyin']}</div>
-                            <button type="button" class="audio-btn" onclick="playChineseAudio('{cur_word['word']}', event)">
+                            <button type="button" class="audio-btn" onclick="speakText('{cur_word['word']}', event)">
                                 🔊 Nghe phát âm
                             </button>
                         </div>
-                        <div class="tap-hint" style="color: #94A3B8; font-size: 13px;">👆 <b>Chạm thẻ để lật mặt sau</b></div>
+                        <div style="color: #94A3B8; font-size: 13px;">👆 <b>Chạm thẻ để lật mặt sau</b></div>
                     </div>
                     <!-- MẶT SAU -->
                     <div class="flashcard-face flashcard-back">
@@ -540,16 +590,16 @@ if mode_choice == "Thẻ từ":
                                     <h3 style="margin:0; color:#1E3A8A; display:inline;">{cur_word['word']}</h3>
                                     <span style="font-size:15px; color:#64748B; margin-left:8px;">{cur_word['pinyin']}</span>
                                 </div>
-                                <button type="button" class="audio-btn" style="margin:0; padding:3px 10px; font-size:12px;" onclick="playChineseAudio('{cur_word['word']}', event)">
+                                <button type="button" class="audio-btn" style="margin:0; padding:4px 12px; font-size:12px;" onclick="speakText('{cur_word['word']}', event)">
                                     🔊 Nghe
                                 </button>
                             </div>
-                            <div style="color:#059669; font-weight:700; font-size:17px; margin:6px 0 10px 0;">👉 {cur_word['meaning']}</div>
+                            <div style="color:#059669; font-weight:700; font-size:17px; margin:8px 0 10px 0;">👉 {cur_word['meaning']}</div>
                             <div style="font-size:13px; font-weight:600; color:#334155; margin-bottom:4px;">🔗 Cụm từ hay dùng:</div>
                             {colloc_html}
                             <div class="example-box">💬 <b>Ví dụ:</b><br>{cur_word['example']}</div>
                         </div>
-                        <div class="tap-hint" style="color: #94A3B8; font-size: 13px; text-align: center;">👆 <b>Chạm lại để lật về chữ Hán</b></div>
+                        <div style="color: #94A3B8; font-size: 13px; text-align: center;">👆 <b>Chạm lại để lật về chữ Hán</b></div>
                     </div>
                 </div>
             </label>
@@ -576,11 +626,10 @@ if mode_choice == "Thẻ từ":
                 st.session_state.card_idx = (st.session_state.card_idx + 1) % total_words
                 st.rerun()
 
-# ==================== CHẾ ĐỘ 2: TRẮC NGHIỆM (LÀM TỪNG CÂU - SAI PHẢI CHỌN ĐÚNG) ====================
+# ==================== CHẾ ĐỘ 2: TRẮC NGHIỆM TỪNG CÂU ====================
 elif mode_choice == "Trắc nghiệm":
     st.markdown("##### ✍️ Trắc nghiệm phản xạ từng câu")
 
-    # Tạo bộ câu hỏi khi bấm làm lại
     if len(st.session_state.quiz_list) == 0 or st.button("🎲 Tạo bài kiểm tra mới (10 câu)"):
         sample_size = min(10, len(current_vocab))
         sampled = random.sample(current_vocab, sample_size)
@@ -607,13 +656,11 @@ elif mode_choice == "Trắc nghiệm":
     total_q = len(st.session_state.quiz_list)
     cur_q_idx = st.session_state.quiz_active_idx
 
-    # Nếu đã hoàn thành tất cả các câu
     if cur_q_idx >= total_q:
         st.balloons()
         st.success(f"🎉 **Chúc mừng bạn đã hoàn thành xuất sắc toàn bộ {total_q} câu trắc nghiệm!**")
         st.markdown(f"Tổng số lần chọn nhầm trong cả bài: **{st.session_state.quiz_wrong_attempts} lần**")
 
-        # Lưu vào lịch sử
         save_history({
             "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
             "name": st.session_state.student_name if st.session_state.student_name else "Ẩn danh",
@@ -626,7 +673,6 @@ elif mode_choice == "Trắc nghiệm":
             st.session_state.quiz_list = []
             st.rerun()
     else:
-        # HIỂN THỊ DUY NHẤT CÂU HỎI HIỆN TẠI
         q_item = st.session_state.quiz_list[cur_q_idx]
 
         st.caption(f"Tiến độ câu hỏi: **Câu {cur_q_idx + 1} / {total_q}**")
@@ -636,7 +682,7 @@ elif mode_choice == "Trắc nghiệm":
             st.markdown(f"""
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="color:#1E3A8A; margin:0;">{q_item['word']} <span style="font-size:18px; color:#64748B; font-weight:normal;">({q_item['pinyin']})</span></h2>
-                <button type="button" class="audio-btn" style="margin:0; padding:4px 10px;" onclick="playChineseAudio('{q_item['word']}', event)">
+                <button type="button" class="audio-btn" style="margin:0; padding:4px 12px;" onclick="speakText('{q_item['word']}', event)">
                     🔊 Nghe
                 </button>
             </div>
@@ -650,7 +696,6 @@ elif mode_choice == "Trắc nghiệm":
                 label_visibility="collapsed"
             )
 
-            # Nút nộp đáp án câu này
             if not st.session_state.quiz_answered_correctly:
                 if st.button("Kiểm tra đáp án", type="primary", use_container_width=True):
                     if selected_answer == q_item["correct"]:
@@ -664,7 +709,6 @@ elif mode_choice == "Trắc nghiệm":
                         st.session_state.failed_ids.add(q_item["id"])
                         st.rerun()
 
-            # Hiển thị thông báo kết quả
             if st.session_state.quiz_error_msg:
                 st.error(st.session_state.quiz_error_msg)
 
@@ -726,7 +770,7 @@ elif mode_choice == "Nối từ":
                 "score": f"{m_score}/{total_m} cặp"
             })
 
-# ==================== CHẾ ĐỘ 4: MỤC LỤC TỪ (CARD VIEW ĐÚNG FORMAT YÊU CẦU) ====================
+# ==================== CHẾ ĐỘ 4: MỤC LỤC TỪ (CARD VIEW) ====================
 elif mode_choice == "Mục lục từ":
     st.markdown("##### 📖 Mục lục từ vựng")
     search_txt = st.text_input("🔍 Tìm kiếm từ:", placeholder="Nhập Hán tự, Pinyin hoặc Tiếng Việt...")
@@ -738,14 +782,13 @@ elif mode_choice == "Mục lục từ":
 
     st.caption(f"Hiển thị **{len(filtered)}** từ vựng theo dạng khung chi tiết:")
 
-    # HIỂN THỊ TỪNG TỪ THEO KHUNG CARD BO GÓC DỊU MẮT
     for w in filtered:
         collocs_str = "".join([f"<div class='vocab-card-colloc'>• {c}</div>" for c in w["collocations"]])
         card_html = f"""
         <div class="vocab-card">
             <div class="vocab-card-header">
                 <span class="vocab-card-title">{w['word']}</span>
-                <button type="button" class="audio-btn" style="margin:0; padding:3px 12px;" onclick="playChineseAudio('{w['word']}', event)">
+                <button type="button" class="audio-btn" style="margin:0; padding:4px 14px;" onclick="speakText('{w['word']}', event)">
                     🔊 Nghe
                 </button>
             </div>
@@ -774,3 +817,4 @@ elif mode_choice == "Lịch sử":
         if st.button("🗑️ Xóa toàn bộ lịch sử", type="secondary"):
             if os.path.exists(HISTORY_FILE):
                 os.remove(HISTORY_FILE)
+            st.rerun()
