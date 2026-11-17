@@ -255,7 +255,7 @@ function playChineseAudio(text, event) {
 </script>
 """, unsafe_allow_html=True)
 
-# --- DỮ LIỆU TỔNG 26 TỪ CỐT LÕI (ĐÃ GỘP CHUNG THÀNH MỘT DANH MỤC DUY NHẤT) ---
+# --- DỮ LIỆU TỔNG 26 TỪ CỐT LÕI (DANH MỤC GỘP CHUNG) ---
 VOCAB_DATA = [
     {
         "id": 1,
@@ -345,7 +345,7 @@ VOCAB_DATA = [
         "id": 15,
         "word": "生管部", "pinyin": "shēngguǎn bù", "meaning": "bộ phận sinh quản (PMC - Kế hoạch & Điều độ)",
         "collocations": ["生管排产 (shēngguǎn páichǎn) — sinh quản lên lịch sản xuất", "核对交期 (héduì jiāoqī) — đối chiếu hạn giao hàng", "产能评估 (chánnéng pínggū) — đánh giá năng suất xưởng"],
-        "example": "生管部正在根据订单安排下周的排产计划。(Shēngguǎn bù zhèngzài gēnjù dìngdān ānpái xià zhōu de páichǎn jìhuà.) — Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới theo đơn hàng."
+        "example": "生管部正在根据订单安排下周 de 排产计划。(Shēngguǎn bù zhèngzài gēnjù dìngdān ānpái xià zhōu de páichǎn jìhuà.) — Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới theo đơn hàng."
     },
     {
         "id": 16,
@@ -463,7 +463,7 @@ s_name = st.text_input("👤 Họ tên học viên:", value=st.session_state.stu
 if s_name:
     st.session_state.student_name = s_name.strip()
 
-# --- 1. DÀN HÀNG NGANG: PHẠM VI BÀI HỌC (ĐÃ GỘP THÀNH MỘT) ---
+# --- 1. DÀN HÀNG NGANG: PHẠM VI BÀI HỌC (GỘP CHUNG) ---
 st.markdown("**Phạm vi bài học:**")
 scope_choice = st.radio(
     "scope_radio",
@@ -503,8 +503,8 @@ if mode_choice == "Thẻ từ":
         if st.session_state.card_idx >= total_words:
             st.session_state.card_idx = 0
 
-        # Nút bổ sung: Lật ngẫu nhiên (Shuffle)
-        top_btn1, top_btn2 = st.columns()
+        # ĐÃ SỬA: st.columns(2) truyền đầy đủ tham số
+        top_btn1, top_btn2 = st.columns(2)
         with top_btn1:
             st.caption(f"Thẻ hiện tại: **{st.session_state.card_idx + 1} / {total_words}**")
         with top_btn2:
@@ -774,4 +774,3 @@ elif mode_choice == "Lịch sử":
         if st.button("🗑️ Xóa toàn bộ lịch sử", type="secondary"):
             if os.path.exists(HISTORY_FILE):
                 os.remove(HISTORY_FILE)
-            st.rerun()
