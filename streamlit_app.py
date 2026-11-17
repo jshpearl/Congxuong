@@ -7,18 +7,16 @@ from datetime import datetime
 
 # --- CẤU HÌNH TRANG STREAMLIT ---
 st.set_page_config(
-    page_title="Ôn Tập Tiếng Trung Công Xưởng",
+    page_title="Tiếng Trung Công Xưởng",
     page_icon="🏭",
     layout="wide",
     initial_sidebar_state="collapsed"
 )
 
-# --- CSS TỐI ƯU GIAO DIỆN & ẨN LOGO / MENU GÓC PHẢI ---
+# --- CSS PASTEL DỊU NHẸ, BO GÓC & ẨN LOGO GÓC PHẢI ---
 st.markdown("""
 <style>
-    /* ======================================================== */
-    /* 1. ẨN HOÀN TOÀN LOGO STREAMLIT, MENU & HEADER GÓC PHẢI */
-    /* ======================================================== */
+    /* 1. ẨN HOÀN TOÀN LOGO STREAMLIT & HEADER GÓC PHẢI */
     #MainMenu {visibility: hidden; display: none !important;}
     header[data-testid="stHeader"] {visibility: hidden; display: none !important;}
     footer {visibility: hidden; display: none !important;}
@@ -26,19 +24,17 @@ st.markdown("""
     [data-testid="stDecoration"] {visibility: hidden; display: none !important;}
     [data-testid="stStatusWidget"] {visibility: hidden; display: none !important;}
 
-    /* ======================================================== */
-    /* 2. GIAO DIỆN MOBILE & 3D FLIP CARD                       */
-    /* ======================================================== */
+    /* 2. KHUNG CHÍNH MOBILE-FIRST */
     .block-container {
-        padding-top: 1.2rem;
+        padding-top: 1rem;
         padding-bottom: 2rem;
         padding-left: 0.8rem;
         padding-right: 0.8rem;
-        max-width: 700px;
+        max-width: 680px;
         margin: auto;
     }
-    
-    /* Giao diện nút dàn hàng ngang (Horizontal Pills) */
+
+    /* 3. NÚT DÀN HÀNG NGANG PASTEL BO GÓC TRÒN TRĨNH */
     div[data-testid="stRadio"] > div {
         display: flex;
         flex-direction: row;
@@ -46,17 +42,23 @@ st.markdown("""
         gap: 8px;
     }
     div[data-testid="stRadio"] label {
-        background: #f1f5f9;
-        padding: 6px 14px;
-        border-radius: 20px;
-        border: 1px solid #cbd5e1;
+        background: #F8FAFC;
+        padding: 7px 16px;
+        border-radius: 24px;
+        border: 1px solid #E2E8F0;
         cursor: pointer;
         font-weight: 500;
         font-size: 14px;
+        color: #475569;
+        transition: all 0.2s ease;
         margin: 0 !important;
     }
+    div[data-testid="stRadio"] label:hover {
+        background: #EEF2F6;
+        border-color: #CBD5E1;
+    }
 
-    /* Hiệu ứng 3D Flashcard */
+    /* 4. FLASHCARD 3D BO GÓC PASTEL */
     .flashcard-wrapper {
         perspective: 1200px;
         margin: 12px auto;
@@ -68,7 +70,7 @@ st.markdown("""
     .flashcard-inner {
         position: relative;
         width: 100%;
-        min-height: 380px;
+        min-height: 390px;
         transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
         transform-style: preserve-3d;
         cursor: pointer;
@@ -82,230 +84,334 @@ st.markdown("""
         position: absolute;
         width: 100%;
         height: 100%;
-        min-height: 380px;
+        min-height: 390px;
         backface-visibility: hidden;
         -webkit-backface-visibility: hidden;
-        border-radius: 20px;
-        padding: 24px 18px;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.07);
+        border-radius: 24px;
+        padding: 24px 20px;
+        box-shadow: 0 10px 25px rgba(148, 163, 184, 0.12);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
         box-sizing: border-box;
     }
+
+    /* MẶT TRƯỚC: PASTEL XANH DƯƠNG & TÍM NHẸ */
     .flashcard-front {
-        background: linear-gradient(145deg, #ffffff, #f0f7ff);
-        border: 2px solid #bfdbfe;
+        background: linear-gradient(135deg, #F0F7FF 0%, #FAF5FF 100%);
+        border: 2px solid #DBEAFE;
         text-align: center;
         align-items: center;
         justify-content: center;
     }
+
+    /* MẶT SAU: PASTEL XANH LÁ BẠC HÀ DỊU */
     .flashcard-back {
-        background: #ffffff;
-        border: 2px solid #86efac;
+        background: #FFFFFF;
+        border: 2px solid #BBF7D0;
         transform: rotateY(180deg);
         overflow-y: auto;
         text-align: left;
     }
+
     .chinese-word {
         font-size: 50px;
         font-weight: 700;
-        color: #1e3a8a;
+        color: #1E3A8A;
         margin: 0;
         line-height: 1.2;
     }
     .pinyin-word {
-        font-size: 20px;
-        color: #4b5563;
-        margin-top: 8px;
+        font-size: 21px;
+        color: #64748B;
+        margin-top: 6px;
+        font-weight: 500;
     }
-    .tap-hint {
-        font-size: 13px;
-        color: #9ca3af;
-        margin-top: 25px;
-        text-align: center;
+
+    /* NÚT PHÁT ÂM PASTEL */
+    .audio-btn {
+        background: #EFF6FF;
+        border: 1px solid #BFDBFE;
+        color: #2563EB;
+        font-size: 14px;
+        font-weight: 600;
+        padding: 6px 14px;
+        border-radius: 20px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        margin-top: 10px;
+        transition: all 0.2s;
     }
+    .audio-btn:hover {
+        background: #DBEAFE;
+        transform: scale(1.03);
+    }
+    .audio-btn:active {
+        transform: scale(0.97);
+    }
+
+    /* 5. KHUNG THẺ TỪ TRONG MỤC LỤC TỪ (CARD VIEW) */
+    .vocab-card {
+        background: #FFFFFF;
+        border: 1.5px solid #E2E8F0;
+        border-radius: 20px;
+        padding: 18px 20px;
+        margin-bottom: 16px;
+        box-shadow: 0 4px 15px rgba(148, 163, 184, 0.08);
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .vocab-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(148, 163, 184, 0.14);
+    }
+    .vocab-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .vocab-card-title {
+        font-size: 26px;
+        font-weight: 700;
+        color: #1E3A8A;
+        margin: 0;
+    }
+    .vocab-card-pinyin {
+        font-size: 16px;
+        color: #64748B;
+        margin-top: 2px;
+        margin-bottom: 10px;
+        font-style: italic;
+    }
+    .vocab-card-meaning {
+        font-size: 16px;
+        font-weight: 600;
+        color: #059669;
+        margin-bottom: 10px;
+    }
+    .vocab-card-colloc {
+        font-size: 14px;
+        color: #334155;
+        line-height: 1.6;
+    }
+    .vocab-card-example {
+        background: #F0FDF4;
+        border-left: 3px solid #34D399;
+        border-radius: 8px;
+        padding: 8px 12px;
+        margin-top: 10px;
+        font-size: 13.5px;
+        color: #166534;
+        line-height: 1.5;
+    }
+
+    /* CỤM TỪ TRÊN FLASHCARD */
     .colloc-item {
-        background-color: #f8fafc;
-        border-left: 3px solid #10b981;
+        background-color: #F8FAFC;
+        border-left: 3px solid #10B981;
         padding: 6px 10px;
         margin: 5px 0;
-        border-radius: 4px;
-        font-size: 14px;
-        color: #1e293b;
+        border-radius: 6px;
+        font-size: 13.5px;
+        color: #1E293B;
     }
     .example-box {
-        background-color: #f0fdf4;
-        border-radius: 8px;
-        padding: 10px;
+        background-color: #F0FDF4;
+        border-radius: 12px;
+        padding: 10px 12px;
         margin-top: 10px;
         font-size: 13px;
         color: #166534;
         line-height: 1.5;
     }
 </style>
+
+<!-- JAVASCRIPT PHÁT ÂM TIẾNG TRUNG -->
+<script>
+function playChineseAudio(text, event) {
+    if (event) {
+        event.stopPropagation();
+        event.preventDefault();
+    }
+    try {
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+            var utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'zh-CN';
+            utterance.rate = 0.85;
+            window.speechSynthesis.speak(utterance);
+        } else {
+            var url = "[suspicious link removed]" + encodeURIComponent(text);
+            var audio = new Audio(url);
+            audio.play();
+        }
+    } catch(e) {
+        var url = "[suspicious link removed]" + encodeURIComponent(text);
+        var audio = new Audio(url);
+        audio.play();
+    }
+}
+</script>
 """, unsafe_allow_html=True)
 
-# --- DỮ LIỆU TỔNG 26 TỪ (BUỔI 1: 14 TỪ | BUỔI 2: 12 TỪ) ---
+# --- DỮ LIỆU TỔNG 26 TỪ CỐT LÕI (ĐÃ GỘP CHUNG THÀNH MỘT DANH MỤC DUY NHẤT) ---
 VOCAB_DATA = [
-    # BUỔI 1 (14 từ)
     {
-        "id": 1, "lesson": "Buổi 1 (14)",
-        "word": "工厂", "pinyin": "gōngchǎng", "meaning": "Nhà máy, công xưởng",
-        "collocations": ["参观工厂 (Tham quan xưởng)", "工厂规模 (Quy mô xưởng)", "现代化工厂 (Nhà máy hiện đại)"],
-        "example": "欢迎各位领导来我们工厂参观考察。<br><i>(Hoan nghênh các vị lãnh đạo đến tham quan khảo sát nhà máy chúng tôi.)</i>"
+        "id": 1,
+        "word": "工厂", "pinyin": "gōngchǎng", "meaning": "nhà máy, công xưởng",
+        "collocations": ["参观工厂 (cānguān gōngchǎng) — tham quan nhà máy", "工厂规模 (gōngchǎng guīmó) — quy mô nhà xưởng", "现代化工厂 (xiàndàihuà gōngchǎng) — nhà máy hiện đại"],
+        "example": "欢迎各位领导来我们工厂参观考察。(Huānyíng gèwèi lǐngdǎo lái wǒmen gōngchǎng cānguān kǎochá.) — Hoan nghênh các vị lãnh đạo đến tham quan khảo sát nhà máy chúng tôi."
     },
     {
-        "id": 2, "lesson": "Buổi 1 (14)",
-        "word": "车间", "pinyin": "chējiān", "meaning": "Phân xưởng sản xuất",
-        "collocations": ["生产车间 (Xưởng sản xuất)", "无尘车间 (Phòng sạch)", "总装车间 (Xưởng lắp ráp tổng)"],
-        "example": "进入生产车间之前，所有人必须戴好安全帽。<br><i>(Trước khi vào xưởng sản xuất, tất cả phải đội mũ bảo hộ.)</i>"
+        "id": 2,
+        "word": "车间", "pinyin": "chējiān", "meaning": "phân xưởng sản xuất",
+        "collocations": ["生产车间 (shēngchǎn chējiān) — phân xưởng sản xuất", "无尘车间 (wúchén chējiān) — phòng sạch", "总装车间 (zǒngzhuāng chējiān) — xưởng lắp ráp tổng"],
+        "example": "进入生产车间之前，所有人必须戴好安全帽。(Jìnrù shēngchǎn chējiān zhīqián, suǒyǒu rén bìxū dài hǎo ānquánmào.) — Trước khi vào xưởng sản xuất, tất cả mọi người phải đội mũ bảo hộ."
     },
     {
-        "id": 3, "lesson": "Buổi 1 (14)",
-        "word": "办公大楼", "pinyin": "bàngōng dàlóu", "meaning": "Tòa nhà văn phòng hành chính",
-        "collocations": ["行政大楼 (Tòa hành chính)", "佩戴厂牌 (Đeo thẻ nhà máy)", "总经办 (Văn phòng Tổng giám đốc)"],
-        "example": "行政部门都在这栋办公大楼里面办公。<br><i>(Các bộ phận hành chính đều làm việc trong tòa văn phòng này.)</i>"
+        "id": 3,
+        "word": "办公大楼", "pinyin": "bàngōng dàlóu", "meaning": "tòa nhà văn phòng hành chính",
+        "collocations": ["行政大楼 (xíngzhèng dàlóu) — tòa nhà hành chính", "佩戴厂牌 (pèidài chǎngpái) — đeo thẻ công xưởng", "总经办 (zǒngjīngbàn) — văn phòng tổng giám đốc"],
+        "example": "行政部门都在这栋办公大楼里面办公。(Xíngzhèng bùmén dōu zài zhè dòng bàngōng dàlóu lǐmiàn bàngōng.) — Các bộ phận hành chính đều làm việc trong tòa văn phòng này."
     },
     {
-        "id": 4, "lesson": "Buổi 1 (14)",
-        "word": "仓库", "pinyin": "cāngkù", "meaning": "Kho bãi",
-        "collocations": ["原料仓库 (Kho nguyên liệu)", "成品仓库 (Kho thành phẩm)", "月底盘点 (Kiểm kê cuối tháng)"],
-        "example": "原料仓库在工厂东侧，靠近卸货平台。<br><i>(Kho nguyên liệu nằm ở phía đông nhà máy, sát sàn bốc dỡ.)</i>"
+        "id": 4,
+        "word": "仓库", "pinyin": "cāngkù", "meaning": "kho bãi, nhà kho",
+        "collocations": ["原料仓库 (yuánliào cāngkù) — kho nguyên liệu", "成品仓库 (chéngpǐn cāngkù) — kho thành phẩm", "月底盘点 (yuèdǐ pándiǎn) — kiểm kê kho cuối tháng"],
+        "example": "原料仓库在工厂东侧，靠近卸货平台。(Yuánliào cāngkù zài gōngchǎng dōng cè, kàojìn xièhuò píngtái.) — Kho nguyên liệu nằm ở phía đông nhà máy, sát ngay sàn bốc dỡ hàng."
     },
     {
-        "id": 5, "lesson": "Buổi 1 (14)",
-        "word": "设备", "pinyin": "shèbèi", "meaning": "Thiết bị, máy móc",
-        "collocations": ["先进设备 (Thiết bị tiên tiến)", "自动化设备 (Thiết bị tự động)", "数控机床 (Máy CNC)"],
-        "example": "车间里大部分生产设备都是从德国引进的。<br><i>(Phần lớn thiết bị trong xưởng đều nhập từ Đức.)</i>"
+        "id": 5,
+        "word": "设备", "pinyin": "shèbèi", "meaning": "thiết bị, máy móc",
+        "collocations": ["先进设备 (xiānjìn shèbèi) — thiết bị tiên tiến", "自动化设备 (zìdònghuà shèbèi) — thiết bị tự động hóa", "数控机床 (shùkòng jīchuáng) — máy gia công CNC"],
+        "example": "车间里大部分生产设备都是从德国引进的。(Chējiān lǐ dà bùfen shēngchǎn shèbèi dōu shì cóng Déguó yǐnjìn de.) — Phần lớn thiết bị trong xưởng đều được nhập khẩu từ Đức."
     },
     {
-        "id": 6, "lesson": "Buổi 1 (14)",
-        "word": "流水线", "pinyin": "liúshuǐxiàn", "meaning": "Dây chuyền sản xuất lắp ráp",
-        "collocations": ["自动化流水线 (Dây chuyền tự động)", "流水线作业 (Thao tác trên chuyền)", "流水线装配 (Lắp ráp dây chuyền)"],
-        "example": "目前一号车间拥有八条全自动流水线。<br><i>(Hiện tại xưởng số 1 sở hữu 8 dây chuyền tự động hóa.)</i>"
+        "id": 6,
+        "word": "流水线", "pinyin": "liúshuǐxiàn", "meaning": "dây chuyền sản xuất lắp ráp",
+        "collocations": ["自动化流水线 (zìdònghuà liúshuǐxiàn) — dây chuyền tự động", "流水线作业 (liúshuǐxiàn zuòyè) — thao tác trên chuyền", "流水线装配 (liúshuǐxiàn zhuāngpèi) — lắp ráp trên dây chuyền"],
+        "example": "目前一号车间拥有八条全自动流水线。(Mùqián yī hào chējiān yōngyǒu bā tiáo quán zìdòng liúshuǐxiàn.) — Hiện tại xưởng số 1 sở hữu 8 dây chuyền tự động hóa hoàn toàn."
     },
     {
-        "id": 7, "lesson": "Buổi 1 (14)",
-        "word": "生产部", "pinyin": "shēngchǎn bù", "meaning": "Bộ phận sản xuất",
-        "collocations": ["安排生产 (Sắp xếp sản xuất)", "生产能力 (Năng lực sản xuất)", "生产进度 (Tiến độ sản xuất)"],
-        "example": "生产部主要负责按照订单保质保量完成任务。<br><i>(Bộ phận sản xuất phụ trách hoàn thành đơn hàng bảo đảm chất và lượng.)</i>"
+        "id": 7,
+        "word": "生产部", "pinyin": "shēngchǎn bù", "meaning": "bộ phận sản xuất",
+        "collocations": ["安排生产 (ānpái shēngchǎn) — bố trí lịch sản xuất", "生产能力 (shēngchǎn nénglì) — năng lực sản xuất", "生产进度 (shēngchǎn jìndù) — tiến độ sản xuất"],
+        "example": "生产部主要负责按照订单保质保量完成任务。(Shēngchǎn bù zhǔyào fùzé ànzhào dìngdān bǎozhì bǎoliàng wánchéng rènwù.) — Bộ phận sản xuất phụ trách hoàn thành đơn hàng bảo đảm chất và lượng."
     },
     {
-        "id": 8, "lesson": "Buổi 1 (14)",
-        "word": "生产主管", "pinyin": "shēngchǎn zhǔguǎn", "meaning": "Chủ quản sản xuất",
-        "collocations": ["车间主管 (Chủ quản xưởng)", "布置任务 (Bố trí nhiệm vụ)", "开早会 (Họp giao ban sáng)"],
-        "example": "生产主管正在和产线组长开早会。<br><i>(Chủ quản sản xuất đang họp giao ban sáng với tổ trưởng chuyền.)</i>"
+        "id": 8,
+        "word": "生产主管", "pinyin": "shēngchǎn zhǔguǎn", "meaning": "chủ quản sản xuất",
+        "collocations": ["车间主管 (chējiān zhǔguǎn) — chủ quản xưởng", "布置任务 (bùzhì rènwù) — giao nhiệm vụ sản xuất", "开早会 (kāi zǎohuì) — họp giao ban sáng"],
+        "example": "生产主管正在和产线组长开早会。(Shēngchǎn zhǔguǎn zhèngzài hé chǎnxiàn zǔzhǎng kāi zǎohuì.) — Chủ quản sản xuất đang họp giao ban sáng với các tổ trưởng chuyền."
     },
     {
-        "id": 9, "lesson": "Buổi 1 (14)",
-        "word": "产线组长", "pinyin": "chǎnxiàn zǔzhǎng", "meaning": "Tổ trưởng chuyền sản xuất",
-        "collocations": ["车间组长 (Tổ trưởng xưởng)", "巡视产线 (Đi tuần tra chuyền)", "跟催进度 (Đôn đốc tiến độ)"],
-        "example": "产线组长负责管理现场作业员并监督产量。<br><i>(Tổ trưởng chuyền quản lý công nhân và giám sát sản lượng.)</i>"
+        "id": 9,
+        "word": "产线组长", "pinyin": "chǎnxiàn zǔzhǎng", "meaning": "tổ trưởng chuyền sản xuất",
+        "collocations": ["车间组长 (chējiān zǔzhǎng) — tổ trưởng xưởng", "巡视产线 (xúnshì chǎnxiàn) — đi tuần kiểm chuyền", "跟催进度 (gēncuī jìndù) — đôn đốc tiến độ"],
+        "example": "产线组长负责管理现场作业员并监督产量。(Chǎnxiàn zǔzhǎng fùzé guǎnlǐ xiànchǎng zuòyèyuán bìng jiāndū chǎnliàng.) — Tổ trưởng chuyền quản lý công nhân và giám sát sản lượng."
     },
     {
-        "id": 10, "lesson": "Buổi 1 (14)",
-        "word": "作业员", "pinyin": "zuòyèyuán", "meaning": "Công nhân thao tác trực tiếp, thợ đứng chuyền",
-        "collocations": ["一线作业员 (Công nhân tuyến đầu)", "操作规程 (Quy trình thao tác)", "严格遵守 (Tuân thủ nghiêm ngặt)"],
-        "example": "作业员在工位上必须严格遵守操作规程。<br><i>(Công nhân tại vị trí làm việc phải tuân thủ nghiêm quy trình.)</i>"
+        "id": 10,
+        "word": "作业员", "pinyin": "zuòyèyuán", "meaning": "công nhân thao tác trực tiếp, thợ đứng chuyền",
+        "collocations": ["一线作业员 (yīxiàn zuòyèyuán) — công nhân tuyến đầu", "操作规程 (cāozuò guīchéng) — quy trình thao tác", "严格遵守 (yángé zūnshǒu) — tuân thủ nghiêm ngặt"],
+        "example": "作业员在工位上必须严格遵守操作规程。(Zuòyèyuán zài gōngwèi shàng bìxū yángé zūnshǒu cāozuò guīchéng.) — Công nhân tại vị trí làm việc bắt buộc phải tuân thủ nghiêm quy trình."
     },
     {
-        "id": 11, "lesson": "Buổi 1 (14)",
-        "word": "品质部", "pinyin": "pǐnzhì bù", "meaning": "Bộ phận quản lý chất lượng (QC)",
-        "collocations": ["品质主管 (Chủ quản chất lượng)", "严格把关 (Kiểm soát chặt chẽ)", "不良品 (Hàng lỗi)"],
-        "example": "如果品质部判定不合格，货物绝对不能出厂。<br><i>(Nếu QC đánh giá không đạt, hàng tuyệt đối không được xuất xưởng.)</i>"
+        "id": 11,
+        "word": "品质部", "pinyin": "pǐnzhì bù", "meaning": "bộ phận quản lý chất lượng (QC/QA)",
+        "collocations": ["品质主管 (pǐnzhì zhǔguǎn) — chủ quản chất lượng", "严格把关 (yángé bǎguān) — kiểm soát chặt chẽ", "不良品 (bùliángpǐn) — hàng phế phẩm, hàng lỗi"],
+        "example": "如果品质部判定不合格，货物绝对不能出厂。(Rúguǒ pǐnzhì bù pàndìng bù hégé, huòwù juéduì bùnéng chūchǎng.) — Nếu bộ phận QC đánh giá không đạt, hàng tuyệt đối không được xuất xưởng."
     },
     {
-        "id": 12, "lesson": "Buổi 1 (14)",
-        "word": "质检员", "pinyin": "zhìjiǎnyuán", "meaning": "Nhân viên kiểm tra chất lượng (QC)",
-        "collocations": ["巡检 (Đi tuần kiểm)", "首件确认 (Xác nhận mẫu đầu)", "检验报告 (Báo cáo kiểm phẩm)"],
-        "example": "质检员正在产线上抽检产品的外观和尺寸。<br><i>(QC đang rút mẫu kiểm tra ngoại quan và kích thước trên chuyền.)</i>"
+        "id": 12,
+        "word": "质检员", "pinyin": "zhìjiǎnyuán", "meaning": "nhân viên kiểm tra chất lượng (QC)",
+        "collocations": ["巡检 (xúnjiǎn) — đi tuần tra kiểm tra", "首件确认 (shǒujiàn quèrèn) — duyệt mẫu sản phẩm đầu", "检验报告 (jiǎnyàn bàogào) — báo cáo kiểm phẩm"],
+        "example": "质检员正在产线上抽检产品的外观和尺寸。(Zhìjiǎnyuán zhèngzài chǎnxiàn shàng chōujiǎn chǎnpǐn de wàiguān hé chǐcunn.) — Nhân viên QC đang rút mẫu kiểm tra ngoại quan và kích thước trên chuyền."
     },
     {
-        "id": 13, "lesson": "Buổi 1 (14)",
-        "word": "工程部", "pinyin": "gōngchéng bù", "meaning": "Bộ phận kỹ thuật, công trình",
-        "collocations": ["设备工程师 (Kỹ sư thiết bị)", "改善工艺 (Cải tiến công nghệ)", "技术支持 (Hỗ trợ kỹ thuật)"],
-        "example": "工程部负责制定新产品的作业指导书。<br><i>(Phòng kỹ thuật soạn thảo tài liệu SOP cho sản phẩm mới.)</i>"
+        "id": 13,
+        "word": "工程部", "pinyin": "gōngchéng bù", "meaning": "bộ phận kỹ thuật, công trình",
+        "collocations": ["设备工程师 (shèbèi gōngchéngshī) — kỹ sư thiết bị", "改善工艺 (gǎishàn gōngyì) — cải tiến công nghệ", "技术支持 (jìshù zhīchí) — hỗ trợ mặt kỹ thuật"],
+        "example": "工程部负责制定新产品的作业指导书。(Gōngchéng bù fùzé zhìdìng xīn chǎnpǐn de zuòyè zhǐdǎoshū.) — Phòng kỹ thuật phụ trách soạn thảo tài liệu SOP cho sản phẩm mới."
     },
     {
-        "id": 14, "lesson": "Buổi 1 (14)",
-        "word": "技术员", "pinyin": "jìshùyuán", "meaning": "Kỹ thuật viên (chỉnh máy, bảo trì)",
-        "collocations": ["现场调机 (Chỉnh máy hiện trường)", "维修模具 (Sửa khuôn)", "排除故障 (Khắc phục sự cố)"],
-        "example": "机台出现故障，技术员马上过来调机。<br><i>(Máy móc gặp sự cố, kỹ thuật viên lập tức qua căn chỉnh máy.)</i>"
-    },
-
-    # BUỔI 2 (12 từ)
-    {
-        "id": 15, "lesson": "Buổi 2 (12)",
-        "word": "生管部", "pinyin": "shēngguǎn bù", "meaning": "Bộ phận sinh quản (PMC - Kế hoạch & Điều độ)",
-        "collocations": ["生管排产 (Sinh quản lên lịch)", "核对交期 (Đối chiếu hạn giao)", "产能评估 (Đánh giá năng lực xưởng)"],
-        "example": "生管部正在安排下周的排产计划。<br><i>(Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới.)</i>"
+        "id": 14,
+        "word": "技术员", "pinyin": "jìshùyuán", "meaning": "kỹ thuật viên (chỉnh máy, bảo trì khuôn)",
+        "collocations": ["现场调机 (xiànchǎng tiáojī) — căn chỉnh máy hiện trường", "维修模具 (wéixiū mójù) — sửa chữa khuôn", "排除故障 (páichú gùzhàng) — khắc phục sự cố máy"],
+        "example": "机台出现故障，技术员马上过来调机。(Jītái chūxiàn gùzhàng, jìshùyuán mǎshàng guòlái tiáojī.) — Máy móc gặp sự cố, kỹ thuật viên lập tức qua căn chỉnh máy."
     },
     {
-        "id": 16, "lesson": "Buổi 2 (12)",
-        "word": "采购部", "pinyin": "cǎigòu bù", "meaning": "Bộ phận thu mua",
-        "collocations": ["寻找供应商 (Tìm nhà cung ứng)", "询价采购 (Hỏi giá thu mua)", "采购订单 (Đơn đặt mua hàng - PO)"],
-        "example": "物料短缺时，采购部要第一时间催促交货。<br><i>(Khi thiếu vật tư, phòng thu mua phải giục giao hàng ngay.)</i>"
+        "id": 15,
+        "word": "生管部", "pinyin": "shēngguǎn bù", "meaning": "bộ phận sinh quản (PMC - Kế hoạch & Điều độ)",
+        "collocations": ["生管排产 (shēngguǎn páichǎn) — sinh quản lên lịch sản xuất", "核对交期 (héduì jiāoqī) — đối chiếu hạn giao hàng", "产能评估 (chánnéng pínggū) — đánh giá năng suất xưởng"],
+        "example": "生管部正在根据订单安排下周的排产计划。(Shēngguǎn bù zhèngzài gēnjù dìngdān ānpái xià zhōu de páichǎn jìhuà.) — Phòng sinh quản đang sắp xếp lịch sản xuất tuần tới theo đơn hàng."
     },
     {
-        "id": 17, "lesson": "Buổi 2 (12)",
-        "word": "仓管员", "pinyin": "cāngguǎnyuán", "meaning": "Thủ kho, nhân viên kho",
-        "collocations": ["办理入库 (Làm thủ tục nhập kho)", "核对库存 (Đối chiếu tồn kho)", "库存报表 (Báo cáo kho)"],
-        "example": "仓管员核对送货单后才办理原材料入库。<br><i>(Thủ kho đối chiếu phiếu giao xong mới làm thủ tục nhập kho.)</i>"
+        "id": 16,
+        "word": "采购部", "pinyin": "cǎigòu bù", "meaning": "bộ phận thu mua",
+        "collocations": ["寻找供应商 (xúnzhǎo gōngyìngshāng) — tìm nhà cung cấp", "询价采购 (xúnjià cǎigòu) — hỏi giá thu mua", "采购订单 (cǎigòu dìngdān) — đơn đặt mua hàng (PO)"],
+        "example": "物料短缺时，采购部要第一时间催促供应商交货。(Wùliào duǎnquē shí, cǎigòu bù yào dì-yī shíjiān cuīcù gōngyìngshāng jiāohuò.) — Khi thiếu vật tư, phòng thu mua phải giục nhà cung cấp giao hàng ngay."
     },
     {
-        "id": 18, "lesson": "Buổi 2 (12)",
-        "word": "物料员", "pinyin": "wùliàoyuán", "meaning": "Nhân viên tiếp liệu, cấp phát vật tư",
-        "collocations": ["凭单领料 (Lĩnh liệu theo phiếu)", "现场配送 (Phát liệu tại chỗ)", "领料单 (Phiếu lĩnh vật tư)"],
-        "example": "产线物料员拿着领料单去仓库领配件。<br><i>(Nhân viên tiếp liệu cầm phiếu lên kho nhận linh kiện.)</i>"
+        "id": 17,
+        "word": "仓管员", "pinyin": "cāngguǎnyuán", "meaning": "thủ kho, nhân viên quản lý kho",
+        "collocations": ["办理入库 (bànlǐ rùkù) — làm thủ tục nhập kho", "核对库存 (héduì kùcún) — đối chiếu lượng tồn kho", "库存报表 (kùcún bàobiǎo) — báo cáo tồn kho"],
+        "example": "仓管员核对送货单后才办理原材料入库。(Cāngguǎnyuán héduì sònghuòdān hòu cái bànlǐ yuáncáiliào rùkù.) — Thủ kho đối chiếu phiếu giao hàng xong mới làm thủ tục nhập kho."
     },
     {
-        "id": 19, "lesson": "Buổi 2 (12)",
-        "word": "研发部", "pinyin": "yánfā bù", "meaning": "Bộ phận nghiên cứu và phát triển (R&D)",
-        "collocations": ["研发中心 (Trung tâm R&D)", "打样员 (Nhân viên làm mẫu)", "新产品开发 (Phát triển sản phẩm mới)"],
-        "example": "研发部负责根据客户样品进行图纸设计。<br><i>(Phòng R&D phụ trách thiết kế bản vẽ theo mẫu của khách.)</i>"
+        "id": 18,
+        "word": "物料员", "pinyin": "wùliàoyuán", "meaning": "nhân viên tiếp liệu, cấp phát vật tư",
+        "collocations": ["凭单领料 (píngdān lǐngliào) — lĩnh liệu theo phiếu", "现场配送 (xiànchǎng pèisòng) — phát vật tư tại chỗ", "领料单 (lǐngliàodān) — phiếu lĩnh vật tư"],
+        "example": "产线物料员拿着领料单去仓库领配件。(Chǎnxiàn wùliàoyuán názhe lǐngliàodān qù cāngkù lǐng pèijiàn.) — Nhân viên tiếp liệu của chuyền cầm phiếu lĩnh liệu lên kho nhận linh kiện."
     },
     {
-        "id": 20, "lesson": "Buổi 2 (12)",
-        "word": "安全帽", "pinyin": "ānquánmào", "meaning": "Mũ bảo hộ lao động",
-        "collocations": ["佩戴安全帽 (Đội mũ bảo hộ)", "劳保用品 (Đồ bảo hộ)", "安全规范 (Quy chuẩn an toàn)"],
-        "example": "不戴安全帽，严禁进入生产车间！<br><i>(Không đội mũ bảo hộ, nghiêm cấm bước vào xưởng sản xuất!)</i>"
+        "id": 19,
+        "word": "研发部", "pinyin": "yánfā bù", "meaning": "bộ phận nghiên cứu và phát triển (R&D)",
+        "collocations": ["研发中心 (yánfā zhōngxīn) — trung tâm R&D", "打样员 (dǎyàngyuán) — nhân viên làm mẫu thử", "新产品开发 (xīn chǎnpǐn kāifā) — phát triển sản phẩm mới"],
+        "example": "研发部负责根据客户样品进行图纸设计。(Yánfā bù fùzé gēnjù kèhù yàngpǐn jìnxíng túzhǐ shèjì.) — Phòng R&D phụ trách thiết kế bản vẽ dựa theo mẫu của khách hàng."
     },
     {
-        "id": 21, "lesson": "Buổi 2 (12)",
-        "word": "收到", "pinyin": "shōudào", "meaning": "Đã nhận được (chỉ thị, thông báo)",
-        "collocations": ["收到指示 (Đã nhận chỉ thị)", "收到通知 (Đã nhận thông báo)", "收到回复 (Đã nhận phản hồi)"],
-        "example": "收到，我马上安排车间组长挑选不良品。<br><i>(Đã nhận, tôi bố trí tổ trưởng lựa hàng lỗi ra ngay.)</i>"
+        "id": 20,
+        "word": "安全帽", "pinyin": "ānquánmào", "meaning": "mũ bảo hộ lao động",
+        "collocations": ["佩戴安全帽 (pèidài ānquánmào) — đội mũ bảo hộ", "劳保用品 (láobǎo yòngpǐn) — đồ bảo hộ lao động", "安全规范 (ānquán guīfàn) — quy chuẩn an toàn"],
+        "example": "不戴安全帽，严禁进入生产车间！(Bù dài ānquánmào, yánjìn jìnrù shēngchǎn chējiān!) — Không đội mũ bảo hộ, nghiêm cấm bước vào xưởng sản xuất!"
     },
     {
-        "id": 22, "lesson": "Buổi 2 (12)",
-        "word": "马上", "pinyin": "mǎshàng", "meaning": "Ngay lập tức",
-        "collocations": ["马上处理 (Xử lý ngay)", "马上跟进 (Bám sát ngay)", "马上核实 (Xác minh ngay)"],
-        "example": "收到通知，我马上通知产线组织加班。<br><i>(Nhận thông báo, tôi báo chuyền tăng ca ngay.)</i>"
+        "id": 21,
+        "word": "收到", "pinyin": "shōudào", "meaning": "đã nhận được (chỉ thị, thông báo)",
+        "collocations": ["收到指示 (shōudào zhǐshì) — đã nhận được chỉ thị", "收到通知 (shōudào tōngzhī) — đã nhận thông báo", "收到回复 (shōudào huífù) — đã nhận phản hồi"],
+        "example": "收到，我马上安排车间组长挑选不良品。(Shōudào, wǒ mǎshàng ānpái chējiān zǔzhǎng tiāoxuǎn bùliángpǐn.) — Đã nhận, tôi bố trí tổ trưởng lựa hàng lỗi ra ngay."
     },
     {
-        "id": 23, "lesson": "Buổi 2 (12)",
-        "word": "核对", "pinyin": "héduì", "meaning": "Đối chiếu, kiểm tra lại",
-        "collocations": ["核对物料 (Đối chiếu vật tư)", "核对数量 (Đối chiếu số lượng)", "麻烦核对 (Phiền đối chiếu giúp)"],
-        "example": "麻烦仓库帮忙核对这批面料的实际库存。<br><i>(Phiền kho hỗ trợ đối chiếu lượng tồn kho thực tế của lô vải.)</i>"
+        "id": 22,
+        "word": "马上", "pinyin": "mǎshàng", "meaning": "ngay lập tức",
+        "collocations": ["马上处理 (mǎshàng chǔlǐ) — xử lý ngay lập tức", "马上跟进 (mǎshàng gēnjìn) — bám sát tiến độ ngay", "马上核实 (mǎshàng héshí) — xác minh lại ngay"],
+        "example": "收到通知，我马上通知产线组织加班。(Shōudào tōngzhī, wǒ mǎshàng tōngzhī chǎnxiàn zǔzhī jiābān.) — Nhận thông báo, tôi lập tức báo chuyền tăng ca ngay."
     },
     {
-        "id": 24, "lesson": "Buổi 2 (12)",
-        "word": "发", "pinyin": "fā", "meaning": "Gửi (tin nhắn), phát (liệu)",
-        "collocations": ["发群里 (Gửi vào trong nhóm)", "发料单 (Phiếu cấp phát vật tư)", "发邮件 (Gửi email)"],
-        "example": "生产日报表已经发群里，请主管查阅。<br><i>(Báo cáo ngày đã gửi vào nhóm, mời chủ quản duyệt.)</i>"
+        "id": 23,
+        "word": "核对", "pinyin": "héduì", "meaning": "đối chiếu, so sánh kiểm tra lại",
+        "collocations": ["核对物料 (héduì wùliào) — đối chiếu vật tư", "核对数量 (héduì shùliàng) — đối chiếu số lượng", "麻烦核对 (máfan héduì) — phiền đối chiếu giúp"],
+        "example": "麻烦仓库帮忙核对这批面料的实际库存。(Máfan cāngkù bāngmáng héduì zhè pī miànliào de shíjì kùcún.) — Phiền kho hỗ trợ đối chiếu lượng tồn kho thực tế của lô vải này."
     },
     {
-        "id": 25, "lesson": "Buổi 2 (12)",
-        "word": "确认", "pinyin": "quèrèn", "meaning": "Xác nhận",
-        "collocations": ["请确认 (Xin vui lòng xác nhận)", "签字确认 (Ký tên xác nhận)", "首件确认 (Duyệt mẫu đầu chuyền)"],
-        "example": "排产计划已发群里，请各位主管确认。<br><i>(Lịch sản xuất đã gửi nhóm, xin các chủ quản xác nhận giúp.)</i>"
+        "id": 24,
+        "word": "发", "pinyin": "fā", "meaning": "gửi (tin nhắn, mail), phát (vật liệu)",
+        "collocations": ["发群里 (fā qún lǐ) — gửi vào trong nhóm", "发料单 (fāliàodān) — phiếu cấp phát vật tư", "发邮件 (fā yóujiàn) — gửi email"],
+        "example": "生产日报表已经发群里，请主管查阅。(Shēngchǎn rì bàobiǎo yǐjīng fā qún lǐ, qǐng zhǔguǎn cháyuè.) — Báo cáo ngày đã gửi vào nhóm, mời chủ quản duyệt."
     },
     {
-        "id": 26, "lesson": "Buổi 2 (12)",
-        "word": "异常", "pinyin": "yìcháng", "meaning": "Bất thường, sự cố",
-        "collocations": ["现场异常 (Sự cố hiện trường)", "品质异常 (Bất thường chất lượng)", "异常反馈 (Báo cáo sự cố)"],
-        "example": "产线一有异常，必须立刻向上级汇报。<br><i>(Chuyền có sự cố là phải lập tức báo cáo cấp trên ngay.)</i>"
+        "id": 25,
+        "word": "确认", "pinyin": "quèrèn", "meaning": "xác nhận",
+        "collocations": ["请确认 (qǐng quèrèn) — xin vui lòng xác nhận", "签字确认 (qiānzì quèrèn) — ký tên xác nhận", "首件确认 (shǒujiàn quèrèn) — duyệt mẫu đầu chuyền"],
+        "example": "排产计划已发群里，请各位主管确认。(Páichǎn jìhuà yǐ fā qún lǐ, qǐng gèwèi zhǔguǎn quèrèn.) — Lịch sản xuất đã gửi nhóm, xin các chủ quản xác nhận giúp."
+    },
+    {
+        "id": 26,
+        "word": "异常", "pinyin": "yìcháng", "meaning": "bất thường, sự cố phát sinh",
+        "collocations": ["现场异常 (xiànchǎng yìcháng) — sự cố tại hiện trường", "品质异常 (pǐnzhì yìcháng) — bất thường chất lượng", "异常反馈 (yìcháng fǎnkuì) — báo cáo sự cố"],
+        "example": "产线一有异常，必须立刻向上级汇报。(Chǎnxiàn yī yǒu yìcháng, bìxū lìkè xiàng shàngjí huìbào.) — Chuyền có sự cố là phải lập tức báo cáo cấp trên ngay."
     }
 ]
 
@@ -326,7 +432,7 @@ def save_history(entry):
     with open(HISTORY_FILE, "w", encoding="utf-8") as f:
         json.dump(hist, f, ensure_ascii=False, indent=2)
 
-# --- KHỞI TẠO STATE ---
+# --- QUẢN LÝ SESSION STATE ---
 if "learned_ids" not in st.session_state:
     st.session_state.learned_ids = set()
 if "failed_ids" not in st.session_state:
@@ -336,34 +442,43 @@ if "card_idx" not in st.session_state:
 if "student_name" not in st.session_state:
     st.session_state.student_name = ""
 
-# --- TIÊU ĐỀ & NHẬP TÊN HỌC VIÊN ---
-st.markdown("### 🏭 Tiếng Trung Công Xưởng Thực Chiến")
-s_name = st.text_input("👤 Nhập tên học viên:", value=st.session_state.student_name, placeholder="Ví dụ: Nguyễn Văn A")
+# STATE CHO TRẮC NGHIỆM TỪNG CÂU
+if "quiz_active_idx" not in st.session_state:
+    st.session_state.quiz_active_idx = 0
+if "quiz_list" not in st.session_state:
+    st.session_state.quiz_list = []
+if "quiz_answered_correctly" not in st.session_state:
+    st.session_state.quiz_answered_correctly = False
+if "quiz_error_msg" not in st.session_state:
+    st.session_state.quiz_error_msg = ""
+if "quiz_wrong_attempts" not in st.session_state:
+    st.session_state.quiz_wrong_attempts = 0
+
+# --- TIÊU ĐỀ CHÍNH ---
+st.markdown("<h2 style='text-align: center; color: #1E3A8A; margin-bottom: 4px;'>TIẾNG TRUNG CÔNG XƯỞNG</h2>", unsafe_allow_html=True)
+st.caption("<p style='text-align: center; color: #64748B; margin-top: 0;'>Ứng dụng Flashcard & Luyện phản xạ từ vựng thực chiến</p>", unsafe_allow_html=True)
+
+# Ô NHẬP TÊN HỌC VIÊN
+s_name = st.text_input("👤 Họ tên học viên:", value=st.session_state.student_name, placeholder="Ví dụ: Nguyễn Văn A")
 if s_name:
     st.session_state.student_name = s_name.strip()
 
-# --- 1. DÀN HÀNG NGANG: PHẠM VI BÀI HỌC ---
+# --- 1. DÀN HÀNG NGANG: PHẠM VI BÀI HỌC (ĐÃ GỘP THÀNH MỘT) ---
 st.markdown("**Phạm vi bài học:**")
 scope_choice = st.radio(
     "scope_radio",
-    ["Tất cả (26)", "Buổi 1 (14)", "Buổi 2 (12)"],
+    ["Từ vựng đã học (26)"],
     index=0,
     horizontal=True,
     label_visibility="collapsed"
 )
-
-if scope_choice == "Tất cả (26)":
-    current_vocab = VOCAB_DATA
-elif scope_choice == "Buổi 1 (14)":
-    current_vocab = [w for w in VOCAB_DATA if w["lesson"] == "Buổi 1 (14)"]
-else:
-    current_vocab = [w for w in VOCAB_DATA if w["lesson"] == "Buổi 2 (12)"]
+current_vocab = VOCAB_DATA
 
 # --- 2. DÀN HÀNG NGANG: CHẾ ĐỘ LUYỆN TẬP ---
 st.markdown("**Chế độ luyện tập:**")
 mode_choice = st.radio(
     "mode_radio",
-    ["Thẻ từ", "Trắc nghiệm", "Nối từ", "Bảng từ", "Lịch sử"],
+    ["Thẻ từ", "Trắc nghiệm", "Nối từ", "Mục lục từ", "Lịch sử"],
     index=0,
     horizontal=True,
     label_visibility="collapsed"
@@ -380,54 +495,69 @@ st.markdown(f"📊 **Tiến độ:** 📚 Tổng: **{total_words}** từ | ✓ �
 st.progress(pct / 100)
 st.markdown("---")
 
-# ==================== CHẾ ĐỘ 1: THẺ TỪ (FLASHCARD CHẠM LẬT) ====================
+# ==================== CHẾ ĐỘ 1: THẺ TỪ (LẬT 3D + LẬT NGẪU NHIÊN) ====================
 if mode_choice == "Thẻ từ":
     if total_words == 0:
-        st.warning("Không có từ nào trong phạm vi này.")
+        st.warning("Không có từ nào trong danh mục.")
     else:
         if st.session_state.card_idx >= total_words:
             st.session_state.card_idx = 0
 
-        cur_word = current_vocab[st.session_state.card_idx]
-        card_num = st.session_state.card_idx + 1
+        # Nút bổ sung: Lật ngẫu nhiên (Shuffle)
+        top_btn1, top_btn2 = st.columns()
+        with top_btn1:
+            st.caption(f"Thẻ hiện tại: **{st.session_state.card_idx + 1} / {total_words}**")
+        with top_btn2:
+            if st.button("🎲 Lật ngẫu nhiên (Xáo từ)", use_container_width=True):
+                st.session_state.card_idx = random.randint(0, total_words - 1)
+                st.rerun()
 
+        cur_word = current_vocab[st.session_state.card_idx]
         colloc_html = "".join([f"<div class='colloc-item'>• {c}</div>" for c in cur_word["collocations"]])
 
         flashcard_html = f"""
         <div class="flashcard-wrapper">
             <label>
-                <input type="checkbox" class="flashcard-toggle" id="card_{cur_word['id']}_{card_num}">
+                <input type="checkbox" class="flashcard-toggle" id="card_{cur_word['id']}_{st.session_state.card_idx}">
                 <div class="flashcard-inner">
                     <!-- MẶT TRƯỚC -->
                     <div class="flashcard-face flashcard-front">
-                        <span style="background:#e0e7ff; color:#3730a3; padding:4px 12px; border-radius:99px; font-size:12px; font-weight:600;">{cur_word['lesson']}</span>
-                        <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center;">
+                        <span style="background:#E0E7FF; color:#3730A3; padding:4px 14px; border-radius:99px; font-size:12px; font-weight:600;">Từ vựng #{cur_word['id']}</span>
+                        <div style="flex-grow:1; display:flex; flex-direction:column; justify-content:center; align-items:center;">
                             <h1 class="chinese-word">{cur_word['word']}</h1>
                             <div class="pinyin-word">{cur_word['pinyin']}</div>
+                            <button type="button" class="audio-btn" onclick="playChineseAudio('{cur_word['word']}', event)">
+                                🔊 Nghe phát âm
+                            </button>
                         </div>
-                        <div class="tap-hint">👆 <b>Chạm thẻ để lật mặt sau</b></div>
+                        <div class="tap-hint" style="color: #94A3B8; font-size: 13px;">👆 <b>Chạm thẻ để lật mặt sau</b></div>
                     </div>
                     <!-- MẶT SAU -->
                     <div class="flashcard-face flashcard-back">
                         <div>
-                            <div style="display:flex; justify-content:space-between; align-items:baseline;">
-                                <h3 style="margin:0; color:#1e3a8a;">{cur_word['word']}</h3>
-                                <span style="font-size:15px; color:#4b5563;">{cur_word['pinyin']}</span>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div>
+                                    <h3 style="margin:0; color:#1E3A8A; display:inline;">{cur_word['word']}</h3>
+                                    <span style="font-size:15px; color:#64748B; margin-left:8px;">{cur_word['pinyin']}</span>
+                                </div>
+                                <button type="button" class="audio-btn" style="margin:0; padding:3px 10px; font-size:12px;" onclick="playChineseAudio('{cur_word['word']}', event)">
+                                    🔊 Nghe
+                                </button>
                             </div>
-                            <div style="color:#047857; font-weight:700; font-size:18px; margin:6px 0 10px 0;">👉 {cur_word['meaning']}</div>
-                            <div style="font-size:13px; font-weight:600; color:#374151; margin-bottom:4px;">🔗 Cụm từ hay dùng:</div>
+                            <div style="color:#059669; font-weight:700; font-size:17px; margin:6px 0 10px 0;">👉 {cur_word['meaning']}</div>
+                            <div style="font-size:13px; font-weight:600; color:#334155; margin-bottom:4px;">🔗 Cụm từ hay dùng:</div>
                             {colloc_html}
                             <div class="example-box">💬 <b>Ví dụ:</b><br>{cur_word['example']}</div>
                         </div>
-                        <div class="tap-hint">👆 <b>Chạm lại để lật về chữ Hán</b></div>
+                        <div class="tap-hint" style="color: #94A3B8; font-size: 13px; text-align: center;">👆 <b>Chạm lại để lật về chữ Hán</b></div>
                     </div>
                 </div>
             </label>
         </div>
         """
         st.markdown(flashcard_html, unsafe_allow_html=True)
-        st.caption(f"Thẻ {card_num} / {total_words} (Mã #{cur_word['id']})")
 
+        # HÀNG 3 NÚT ĐIỀU HƯỚNG PASTEL
         btn1, btn2, btn3 = st.columns(3)
         with btn1:
             if st.button("✓ Đã nhớ", type="primary", use_container_width=True):
@@ -442,67 +572,115 @@ if mode_choice == "Thẻ từ":
                 st.session_state.card_idx = (st.session_state.card_idx + 1) % total_words
                 st.rerun()
         with btn3:
-            if st.button("⏭️ Bỏ qua", use_container_width=True):
+            if st.button("⏭️ Tiếp theo", use_container_width=True):
                 st.session_state.card_idx = (st.session_state.card_idx + 1) % total_words
                 st.rerun()
 
-# ==================== CHẾ ĐỘ 2: TRẮC NGHIỆM ====================
+# ==================== CHẾ ĐỘ 2: TRẮC NGHIỆM (LÀM TỪNG CÂU - SAI PHẢI CHỌN ĐÚNG) ====================
 elif mode_choice == "Trắc nghiệm":
-    st.markdown(f"##### ✍️ Trắc nghiệm phản xạ ({scope_choice})")
+    st.markdown("##### ✍️ Trắc nghiệm phản xạ từng câu")
 
-    if "quiz_set" not in st.session_state or st.button("🎲 Đổi đề thi mới"):
+    # Tạo bộ câu hỏi khi bấm làm lại
+    if len(st.session_state.quiz_list) == 0 or st.button("🎲 Tạo bài kiểm tra mới (10 câu)"):
         sample_size = min(10, len(current_vocab))
         sampled = random.sample(current_vocab, sample_size)
-        questions = []
+        new_quiz = []
         for item in sampled:
             wrong_pool = [w["meaning"] for w in VOCAB_DATA if w["id"] != item["id"]]
             distractors = random.sample(wrong_pool, 3)
             options = distractors + [item["meaning"]]
             random.shuffle(options)
-            questions.append({
+            new_quiz.append({
                 "id": item["id"],
                 "word": item["word"],
                 "pinyin": item["pinyin"],
                 "correct": item["meaning"],
                 "options": options
             })
-        st.session_state.quiz_set = questions
+        st.session_state.quiz_list = new_quiz
+        st.session_state.quiz_active_idx = 0
+        st.session_state.quiz_answered_correctly = False
+        st.session_state.quiz_error_msg = ""
+        st.session_state.quiz_wrong_attempts = 0
         st.rerun()
 
-    with st.form("quiz_form"):
-        ans = {}
-        for i, q in enumerate(st.session_state.quiz_set, 1):
-            st.markdown(f"**Câu {i}:** Từ **{q['word']}** *( {q['pinyin']} )* nghĩa là gì?")
-            ans[i] = st.radio(f"q_{i}", q["options"], key=f"q_{i}", label_visibility="collapsed")
-            st.write("")
+    total_q = len(st.session_state.quiz_list)
+    cur_q_idx = st.session_state.quiz_active_idx
 
-        if st.form_submit_button("Nộp bài & Chấm điểm", type="primary", use_container_width=True):
-            score = 0
-            for i, q in enumerate(st.session_state.quiz_set, 1):
-                if ans[i] == q["correct"]:
-                    score += 1
-                    st.session_state.learned_ids.add(q["id"])
-                else:
-                    st.session_state.failed_ids.add(q["id"])
+    # Nếu đã hoàn thành tất cả các câu
+    if cur_q_idx >= total_q:
+        st.balloons()
+        st.success(f"🎉 **Chúc mừng bạn đã hoàn thành xuất sắc toàn bộ {total_q} câu trắc nghiệm!**")
+        st.markdown(f"Tổng số lần chọn nhầm trong cả bài: **{st.session_state.quiz_wrong_attempts} lần**")
 
-            total_q = len(st.session_state.quiz_set)
-            pct_score = round((score / total_q) * 100, 1)
-            st.success(f"🎉 Kết quả: **{score}/{total_q} câu đúng** ({pct_score}%)")
-            if pct_score >= 80:
-                st.balloons()
+        # Lưu vào lịch sử
+        save_history({
+            "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
+            "name": st.session_state.student_name if st.session_state.student_name else "Ẩn danh",
+            "type": "Trắc nghiệm từng câu",
+            "scope": "Toàn bộ từ vựng (26)",
+            "score": f"Đạt {total_q}/{total_q} câu (Lỗi: {st.session_state.quiz_wrong_attempts})"
+        })
 
-            save_history({
-                "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
-                "name": st.session_state.student_name if st.session_state.student_name else "Ẩn danh",
-                "type": "Trắc nghiệm",
-                "scope": scope_choice,
-                "score": f"{score}/{total_q} ({pct_score}%)"
-            })
+        if st.button("🔄 Luyện tập lại từ đầu", type="primary", use_container_width=True):
+            st.session_state.quiz_list = []
+            st.rerun()
+    else:
+        # HIỂN THỊ DUY NHẤT CÂU HỎI HIỆN TẠI
+        q_item = st.session_state.quiz_list[cur_q_idx]
+
+        st.caption(f"Tiến độ câu hỏi: **Câu {cur_q_idx + 1} / {total_q}**")
+        st.progress((cur_q_idx) / total_q)
+
+        with st.container(border=True):
+            st.markdown(f"""
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <h2 style="color:#1E3A8A; margin:0;">{q_item['word']} <span style="font-size:18px; color:#64748B; font-weight:normal;">({q_item['pinyin']})</span></h2>
+                <button type="button" class="audio-btn" style="margin:0; padding:4px 10px;" onclick="playChineseAudio('{q_item['word']}', event)">
+                    🔊 Nghe
+                </button>
+            </div>
+            <p style="color:#475569; margin-top:8px; font-size:15px;">👉 Từ trên có nghĩa là gì?</p>
+            """, unsafe_allow_html=True)
+
+            selected_answer = st.radio(
+                "Lựa chọn đáp án:",
+                q_item["options"],
+                key=f"radio_q_{cur_q_idx}",
+                label_visibility="collapsed"
+            )
+
+            # Nút nộp đáp án câu này
+            if not st.session_state.quiz_answered_correctly:
+                if st.button("Kiểm tra đáp án", type="primary", use_container_width=True):
+                    if selected_answer == q_item["correct"]:
+                        st.session_state.quiz_answered_correctly = True
+                        st.session_state.quiz_error_msg = ""
+                        st.session_state.learned_ids.add(q_item["id"])
+                        st.rerun()
+                    else:
+                        st.session_state.quiz_wrong_attempts += 1
+                        st.session_state.quiz_error_msg = f"❌ Bạn chọn '{selected_answer}' chưa chính xác. Vui lòng chọn lại cho đúng mới được qua câu tiếp nhé!"
+                        st.session_state.failed_ids.add(q_item["id"])
+                        st.rerun()
+
+            # Hiển thị thông báo kết quả
+            if st.session_state.quiz_error_msg:
+                st.error(st.session_state.quiz_error_msg)
+
+            if st.session_state.quiz_answered_correctly:
+                st.success(f"✓ Chính xác! **{q_item['word']}** nghĩa là: **{q_item['correct']}**")
+                next_label = "➡️ Câu tiếp theo" if (cur_q_idx + 1 < total_q) else "🏁 Hoàn thành bài thi"
+                if st.button(next_label, type="primary", use_container_width=True):
+                    st.session_state.quiz_active_idx += 1
+                    st.session_state.quiz_answered_correctly = False
+                    st.session_state.quiz_error_msg = ""
+                    st.rerun()
 
 # ==================== CHẾ ĐỘ 3: NỐI TỪ ====================
 elif mode_choice == "Nối từ":
-    st.markdown(f"##### 🧩 Trò chơi Nối từ phản xạ ({scope_choice})")
-    
+    st.markdown("##### 🧩 Trò chơi Nối từ phản xạ")
+
     if "match_items" not in st.session_state or st.button("🎲 Tạo ván nối từ mới"):
         sample_match = random.sample(current_vocab, min(5, len(current_vocab)))
         words = [w["word"] for w in sample_match]
@@ -514,12 +692,12 @@ elif mode_choice == "Nối từ":
         st.session_state.match_meanings = meanings
         st.rerun()
 
-    st.caption("Chọn nghĩa tiếng Việt tương ứng cho từng từ tiếng Trung:")
+    st.caption("Chọn nghĩa tương ứng cho từng từ tiếng Trung:")
     user_match = {}
     with st.form("match_form"):
         for w_text in st.session_state.match_words:
-            correct_entry = next(item for item in st.session_state.match_items if item["word"] == w_text)
-            st.markdown(f"👉 Từ: <b style='font-size:18px; color:#1e3a8a;'>{w_text}</b> <i>({correct_entry['pinyin']})</i>", unsafe_allow_html=True)
+            entry = next(item for item in st.session_state.match_items if item["word"] == w_text)
+            st.markdown(f"👉 Từ: <b style='font-size:18px; color:#1E3A8A;'>{w_text}</b> <i>({entry['pinyin']})</i>", unsafe_allow_html=True)
             user_match[w_text] = st.selectbox(
                 f"Nghĩa của {w_text}:",
                 ["-- Chọn nghĩa --"] + st.session_state.match_meanings,
@@ -544,33 +722,42 @@ elif mode_choice == "Nối từ":
                 "time": datetime.now().strftime("%d/%m/%Y %H:%M"),
                 "name": st.session_state.student_name if st.session_state.student_name else "Ẩn danh",
                 "type": "Nối từ",
-                "scope": scope_choice,
+                "scope": "Toàn bộ từ vựng (26)",
                 "score": f"{m_score}/{total_m} cặp"
             })
 
-# ==================== CHẾ ĐỘ 4: BẢNG TỪ ====================
-elif mode_choice == "Bảng từ":
-    st.markdown(f"##### 📖 Bảng từ vựng ({scope_choice})")
-    search_txt = st.text_input("🔍 Tìm kiếm từ vựng:", placeholder="Nhập Hán tự, Pinyin hoặc Tiếng Việt...")
+# ==================== CHẾ ĐỘ 4: MỤC LỤC TỪ (CARD VIEW ĐÚNG FORMAT YÊU CẦU) ====================
+elif mode_choice == "Mục lục từ":
+    st.markdown("##### 📖 Mục lục từ vựng")
+    search_txt = st.text_input("🔍 Tìm kiếm từ:", placeholder="Nhập Hán tự, Pinyin hoặc Tiếng Việt...")
 
     filtered = current_vocab
     if search_txt:
         q = search_txt.strip().lower()
         filtered = [w for w in current_vocab if q in w["word"].lower() or q in w["pinyin"].lower() or q in w["meaning"].lower()]
 
-    rows = []
-    for w in filtered:
-        status = "✓ Đã nhớ" if w["id"] in st.session_state.learned_ids else ("⚡ Chưa thuộc" if w["id"] in st.session_state.failed_ids else "-")
-        rows.append({
-            "STT": w["id"],
-            "Chữ Hán": w["word"],
-            "Pinyin": w["pinyin"],
-            "Nghĩa": w["meaning"],
-            "Bài": w["lesson"],
-            "Trạng thái": status
-        })
+    st.caption(f"Hiển thị **{len(filtered)}** từ vựng theo dạng khung chi tiết:")
 
-    st.dataframe(pd.DataFrame(rows), use_container_width=True, hide_index=True)
+    # HIỂN THỊ TỪNG TỪ THEO KHUNG CARD BO GÓC DỊU MẮT
+    for w in filtered:
+        collocs_str = "".join([f"<div class='vocab-card-colloc'>• {c}</div>" for c in w["collocations"]])
+        card_html = f"""
+        <div class="vocab-card">
+            <div class="vocab-card-header">
+                <span class="vocab-card-title">{w['word']}</span>
+                <button type="button" class="audio-btn" style="margin:0; padding:3px 12px;" onclick="playChineseAudio('{w['word']}', event)">
+                    🔊 Nghe
+                </button>
+            </div>
+            <div class="vocab-card-pinyin">{w['pinyin']}</div>
+            <div class="vocab-card-meaning">➔ {w['meaning']}</div>
+            {collocs_str}
+            <div class="vocab-card-example">
+                • {w['example']}
+            </div>
+        </div>
+        """
+        st.markdown(card_html, unsafe_allow_html=True)
 
 # ==================== CHẾ ĐỘ 5: LỊCH SỬ ====================
 elif mode_choice == "Lịch sử":
@@ -578,7 +765,7 @@ elif mode_choice == "Lịch sử":
     h_data = load_history()
 
     if not h_data:
-        st.info("Chưa có lịch sử làm bài. Hãy làm bài ở phần 'Trắc nghiệm' hoặc 'Nối từ' để ghi nhận điểm số nhé!")
+        st.info("Chưa có lịch sử làm bài. Hãy hoàn thành một bài test ở phần 'Trắc nghiệm' hoặc 'Nối từ' để lưu kết quả nhé!")
     else:
         df_h = pd.DataFrame(h_data)
         df_h.columns = ["Thời gian", "Học viên", "Chế độ", "Phạm vi", "Kết quả"]
